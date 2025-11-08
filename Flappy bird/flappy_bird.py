@@ -1,8 +1,8 @@
 import pygame, sys, random, os
 from pygame.locals import *
 
-
-os.chdir(r"D:\Python\Game")  
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+#os.chdir(r"D:\Python\Game")  
 
 
 pygame.init()
@@ -15,9 +15,9 @@ DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
 pygame.display.set_caption('Flappy Bird')
 
 
-BACKGROUND = pygame.image.load('background.png')
-BIRDIMG = pygame.image.load('bird.png')
-COLUMNIMG = pygame.image.load('column.png')
+BACKGROUND = pygame.image.load(os.path.join(BASE_DIR, "background.png"))
+BIRDIMG = pygame.image.load(os.path.join(BASE_DIR, "bird.png"))
+COLUMNIMG = pygame.image.load(os.path.join(BASE_DIR, "column.png"))
 
 
 BIRDWIDTH = 60

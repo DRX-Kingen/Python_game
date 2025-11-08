@@ -1,30 +1,31 @@
 
 import pygame, os, time, random
 pygame.font.init() # Load font chữ
-os.chdir(r"D:\Python\Game\Space Invaders")  
+#os.chdir(r"D:\Python\Game\Space Invaders")  
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 WIDTH, HEIGHT = 750, 750
 WIN = pygame.display.set_mode((WIDTH, HEIGHT)) 
-ICON = pygame.image.load(os.path.join("assets", "pixel_ship_red_small.png")) 
+ICON = pygame.image.load(os.path.join(BASE_DIR,"assets", "pixel_ship_red_small.png")) 
 pygame.display.set_icon(ICON) 
 pygame.display.set_caption("Space Invaders") 
 
 
-RED_SPACE_SHIP = pygame.image.load(os.path.join("assets", "pixel_ship_red_small.png"))
-GREEN_SPACE_SHIP = pygame.image.load(os.path.join("assets", "pixel_ship_green_small.png"))
-BLUE_SPACE_SHIP = pygame.image.load(os.path.join("assets", "pixel_ship_blue_small.png"))
+RED_SPACE_SHIP = pygame.image.load(os.path.join(BASE_DIR,"assets", "pixel_ship_red_small.png"))
+GREEN_SPACE_SHIP = pygame.image.load(os.path.join(BASE_DIR,"assets", "pixel_ship_green_small.png"))
+BLUE_SPACE_SHIP = pygame.image.load(os.path.join(BASE_DIR,"assets", "pixel_ship_blue_small.png"))
 
 
-YELLOW_SPACE_SHIP = pygame.image.load(os.path.join("assets", "pixel_ship_yellow.png"))
+YELLOW_SPACE_SHIP = pygame.image.load(os.path.join(BASE_DIR,"assets", "pixel_ship_yellow.png"))
 
 
-RED_LASER = pygame.image.load(os.path.join("assets", "pixel_laser_red.png"))
-GREEN_LASER = pygame.image.load(os.path.join("assets", "pixel_laser_green.png"))
-BLUE_LASER = pygame.image.load(os.path.join("assets", "pixel_laser_blue.png"))
-YELLOW_LASER = pygame.image.load(os.path.join("assets", "pixel_laser_yellow.png"))
+RED_LASER = pygame.image.load(os.path.join(BASE_DIR,"assets", "pixel_laser_red.png"))
+GREEN_LASER = pygame.image.load(os.path.join(BASE_DIR,"assets", "pixel_laser_green.png"))
+BLUE_LASER = pygame.image.load(os.path.join(BASE_DIR,"assets", "pixel_laser_blue.png"))
+YELLOW_LASER = pygame.image.load(os.path.join(BASE_DIR,"assets", "pixel_laser_yellow.png"))
 
 
-BG = pygame.transform.scale(pygame.image.load(os.path.join("assets", "space.png")), (WIDTH, HEIGHT)) 
+BG = pygame.transform.scale(pygame.image.load(os.path.join(BASE_DIR,"assets", "space.png")), (WIDTH, HEIGHT)) 
 
 
 class Laser:
