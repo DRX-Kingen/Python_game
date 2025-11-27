@@ -4,11 +4,11 @@ import subprocess
 import sys
 import os
 
-# Lấy đường dẫn tuyệt đối đến thư mục chứa file script
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 def get_path(relative_path):
-    """(HÀM BỊ THIẾU) Trả về đường dẫn tuyệt đối an toàn."""
+    
     return os.path.join(BASE_DIR, relative_path)
 
 # KHỞI TẠO 
@@ -17,7 +17,7 @@ pygame.font.init()
 
 WIDTH, HEIGHT = 1000, 700
 SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("🎮 MENU CHỌN GAME")
+pygame.display.set_caption
 CLOCK = pygame.time.Clock()
 
 WHITE = (255, 255, 255)
@@ -50,7 +50,7 @@ def load_icon(relative_path, size=(120, 120)):
     icon_surface.fill(GRAY)
     return icon_surface
 
-#ẢNH NỀN 
+
 bg_path = get_path("Assets/menu_bg.jpg")
 if os.path.exists(bg_path):
     background = pygame.image.load(bg_path)
@@ -59,7 +59,7 @@ else:
     print(f"Không tìm thấy ảnh nền: {bg_path}")
     background = None
 
-#Danh Sách Game
+
 games_config = [
     ("Dino Run", get_path("Dino/main.py"), "Logo/DinoJump.png"),
     ("Snake", get_path("Snake/snake.py"), "Logo/Snake.png"),
@@ -76,9 +76,9 @@ loaded_games = [
 ]
 print("Tải xong!")
 
-#Hàm Chạy Game
+
 def run_game(file_path):
-    """Chạy file game Python trong một tiến trình riêng."""
+    
     if not file_path:
         print("Lỗi: Không có file path để chạy (cho nút Random).")
         return
@@ -100,7 +100,7 @@ def run_game(file_path):
     except Exception as e:
         print(f"Lỗi không xác định khi chạy game: {e}")
 
-#HÀM VẼ NÚT GAME
+
 def draw_game_button(icon_surface, name, x, y, mouse_pos):
     icon_size = icon_surface.get_width()
     button_w, button_h = 160, 45
@@ -124,7 +124,7 @@ def draw_game_button(icon_surface, name, x, y, mouse_pos):
         
     SCREEN.blit(icon_scaled, (x - offset, y - offset))
 
-    # Vẽ nút text
+   
     color = YELLOW if hover else LIGHT_GRAY
     pygame.draw.rect(SCREEN, color, button_rect, border_radius=12)
     border_color = BLUE if hover else BLACK
@@ -142,7 +142,7 @@ def draw_game_button(icon_surface, name, x, y, mouse_pos):
 
     return hover_rect 
 
-#MENU CHÍNH 
+
 def main_menu():
     running = True
     
@@ -171,7 +171,7 @@ def main_menu():
         if background:
             SCREEN.blit(background, (0, 0))
         else:
-            SCREEN.fill(WHITE)
+            SCREEN.fill(BLACK)
 
         title_surf = TITLE_FONT.render(" MENU  GAME", True, BLUE)
         shadow_surf = TITLE_FONT.render(" MENU  GAME", True, (0,0,0, 100))
