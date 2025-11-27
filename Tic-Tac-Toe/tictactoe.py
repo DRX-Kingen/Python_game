@@ -1,139 +1,179 @@
-import tkinter #tk-interface (graphical user interface library)
+import pygame, sys
+import numpy as np
 
-def set_tile(row, column):
-    global curr_player
+pygame.init()
 
-    if (game_over):
-        return
+width=600   
+height=600
+line_width=15
+board_rows=3
+board_cols=3
+circle_rad=60
+circle_wid=15
+cross_wid=25
+space=50
 
-    if board[row][column]["text"] != "":
-        #already taken spot
-        return
+light_blue=(0,205,205)
+line_color= (0,102,102)
+circle_color=(239,231,200)
+cross_color=(66,66,66)
+win_message_color = (255, 255, 255) 
+
+screen = pygame.display.set_mode((width,height))
+pygame.display.set_caption('Tic Tac Toe')
+screen.fill(light_blue)
+
+try:
+    font = pygame.font.Font(None, 70)
+    small_font = pygame.font.Font(None, 30)
+except:
+    font = pygame.font.SysFont("monospace", 70) 
+    small_font = pygame.font.SysFont("monospace", 30) 
+
+board=np.zeros((board_rows,board_cols))
+
+def draw_line():
+    pygame.draw.line(screen,line_color,(0,200),(600,200),line_width)
+    pygame.draw.line(screen,line_color,(0,400),(600,400),line_width)
+    pygame.draw.line(screen,line_color,(200,0),(200,600),line_width)
+    pygame.draw.line(screen,line_color,(400,0),(400,600),line_width)
+
+def draw_figure():
+    for row in range(board_rows):
+        for col in range(board_cols):
+            if board[row][col]==1: 
+                pygame.draw.circle(screen,circle_color,(int(col*200 + 100),int(row*200 + 100)),circle_rad,circle_wid)
+            elif board[row][col]==2:
+                pygame.draw.line(screen,cross_color,(col*200+space,row*200+200-space),(col*200+200-space,row*200+space),cross_wid)
+                pygame.draw.line(screen,cross_color,(col*200+space,row*200+space),(col*200+200-space,row*200+200-space),cross_wid)
+
+def mark(row,col,player):
+    board[row][col]=player
+
+def available(row,col):
+    return board[row][col] == 0
     
-    board[row][column]["text"] = curr_player #mark the board
+def is_board_full():
+    return all(board[row][col] != 0 for row in range(board_rows) for col in range(board_cols))
 
-    if curr_player == playerO: #switch player
-        curr_player = playerX
+def draw_vertical_line(col,player):
+    posX = col*200+100
+    color=circle_color if player==1 else cross_color
+    pygame.draw.line(screen,color,(posX,15),(posX,height-15),15)
+
+def draw_horizontal_line(row,player):
+    posY = row*200+100 
+    color=circle_color if player==1 else cross_color
+    pygame.draw.line(screen,color,(15,posY),(width-15,posY),15)
+
+def draw_ascending_diagonal(player):
+    color=circle_color if player==1 else cross_color
+    pygame.draw.line(screen,color,(15,height-15),(width-15,15),15)
+
+def draw_descending_diagonal(player):
+    color=circle_color if player==1 else cross_color
+    pygame.draw.line(screen,color,(15,15),(width-15,height-15),15)
+
+def draw_win_message(winner=None):
+    s = pygame.Surface((width, height), pygame.SRCALPHA)
+    s.fill((0, 0, 0, 150))
+    screen.blit(s, (0, 0))
+    if winner:
+        message = f"PLAYER {winner} WIN!"
     else:
-        curr_player = playerO
-    
-    label["text"] = curr_player+"'s turn"
+        message = "DRAW!" 
+    text = font.render(message, True, win_message_color)
+    text_rect = text.get_rect(center=(width // 2, height // 2 - 30))
+    screen.blit(text, text_rect)
 
-    #check winner
-    check_winner()
+    reset_text = small_font.render("PRESS 'R' TO RESTART", True, win_message_color)
+    reset_rect = reset_text.get_rect(center=(width // 2, height // 2 + 30))
+    screen.blit(reset_text, reset_rect)
 
-def check_winner():
-    global turns, game_over
-    turns += 1
+def check_win(player):
+    for col in range (board_cols):
+        if (board[0][col] == player) and (board[1][col] == player) and (board[2][col] == player):
+            draw_vertical_line(col,player)
+            draw_figure()
+            draw_win_message("O" if player == 1 else "X")
+            return True
+            
+    for row in range (board_rows):
+        if (board[row][0] == player) and (board[row][1] == player) and (board[row][2] == player):
+            draw_horizontal_line(row,player)
+            draw_figure() 
+            draw_win_message("O" if player == 1 else "X")
+            return True
+            
+    if (board[2][0]==player) and (board[1][1]==player) and (board[0][2]==player):
+        draw_ascending_diagonal(player)
+        draw_figure() 
+        draw_win_message("O" if player == 1 else "X")
+        return True
+        
+    if (board[0][0]==player) and (board[1][1]==player) and (board[2][2]==player):
+        draw_descending_diagonal(player)
+        draw_figure() 
+        draw_win_message("O" if player == 1 else "X")
+        return True
+        
+    return False
 
-    #horizontally, check 3 rows
-    for row in range(3):
-        if (board[row][0]["text"] == board[row][1]["text"] == board[row][2]["text"]
-            and board[row][0]["text"] != ""):
-            label.config(text=board[row][0]["text"]+" is the winner!", foreground=color_yellow)
-            for column in range(3):
-                board[row][column].config(foreground=color_yellow, background=color_light_gray)
-            game_over = True
-            return
-    
-    #vertically, check 3 columns
-    for column in range(3):
-        if (board[0][column]["text"] == board[1][column]["text"] == board[2][column]["text"]
-            and board[0][column]["text"] != ""):
-            label.config(text=board[0][column]["text"]+" is the winner!", foreground=color_yellow)
-            for row in range(3):
-                board[row][column].config(foreground=color_yellow, background=color_light_gray)
-            game_over = True
-            return
-    
-    #diagonally
-    if (board[0][0]["text"] == board[1][1]["text"] == board[2][2]["text"]
-        and board[0][0]["text"] != ""):
-        label.config(text=board[0][0]["text"]+" is the winner!", foreground=color_yellow)
-        for i in range(3):
-            board[i][i].config(foreground=color_yellow, background=color_light_gray)
-        game_over = True
-        return
+def restart():
+    screen.fill(light_blue)
+    draw_line()
+    global player
+    global game_over
+    player=2 
+    game_over=False
+    for row in range(board_rows):
+        for col in range(board_cols):
+            board[row][col]=0
 
-    #anti-diagionally
-    if (board[0][2]["text"] == board[1][1]["text"] == board[2][0]["text"]
-        and board[0][2]["text"] != ""):
-        label.config(text=board[0][2]["text"]+" is the winner!", foreground=color_yellow)
-        board[0][2].config(foreground=color_yellow, background=color_light_gray)
-        board[1][1].config(foreground=color_yellow, background=color_light_gray)
-        board[2][0].config(foreground=color_yellow, background=color_light_gray)
-        game_over = True
-        return
-    
-    #tie
-    if (turns == 9):
-        game_over = True
-        label.config(text="Tie!", foreground=color_yellow)
+draw_line()
+player = 2
+game_over=False
 
+#mainloop
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            sys.exit()
 
-def new_game():
-    global turns, game_over
+        if event.type == pygame.MOUSEBUTTONDOWN and not game_over:
+            mouseX = event.pos[0]
+            mouseY = event.pos[1]
 
-    turns = 0
-    game_over = False
+            clicked_row= int(mouseY//200)
+            clicked_col= int(mouseX//200)
 
-    label.config(text=curr_player+"'s turn", foreground="white")
+            if available (clicked_row,clicked_col):
+                if player==1:
+                    mark(clicked_row,clicked_col,1)
+                    draw_figure()
+                    if check_win(player):
+                        game_over = True
+                    elif is_board_full():
+                        game_over = True
+                        draw_win_message() 
+                    
+                    if not game_over:
+                         player=2 
 
-    for row in range(3):
-        for column in range(3):
-            board[row][column].config(text="", foreground=color_blue, background=color_gray)
+                elif player==2: 
+                    mark(clicked_row,clicked_col,2)
+                    draw_figure()
+                    if check_win(player):
+                        game_over = True
+                    elif is_board_full():
+                        game_over = True
+                        draw_win_message() 
+                        
+                    if not game_over:
+                        player=1 
 
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_r:
+                restart()
 
-#game setup
-playerX = "X"
-playerO = "O"
-curr_player = playerX
-board = [[0, 0, 0], 
-         [0, 0, 0], 
-         [0, 0, 0]]
-
-color_blue = "#4584b6"
-color_yellow = "#ffde57"
-color_gray = "#343434"
-color_light_gray = "#646464"
-
-turns = 0
-game_over = False
-
-#window setup
-window = tkinter.Tk() #create the game window
-window.title("Tic Tac Toe")
-window.resizable(False, False)
-
-frame = tkinter.Frame(window)
-label = tkinter.Label(frame, text=curr_player+"'s turn", font=("Consolas", 20), background=color_gray,
-                      foreground="white")
-label.grid(row=0, column=0, columnspan=3, sticky="we")
-
-for row in range(3):
-    for column in range(3):
-        board[row][column] = tkinter.Button(frame, text="", font=("Consolas", 50, "bold"),
-                                            background=color_gray, foreground=color_blue, width=4, height=1,
-                                            command=lambda row=row, column=column: set_tile(row, column))
-        board[row][column].grid(row=row+1, column=column)
-
-button = tkinter.Button(frame, text="restart", font=("Consolas", 20), background=color_gray,
-                        foreground="white", command=new_game)
-button.grid(row=4, column=0, columnspan=3, sticky="we")
-
-frame.pack()
-
-#center the window
-window.update()
-window_width = window.winfo_width()
-window_height = window.winfo_height()
-screen_width = window.winfo_screenwidth()
-screen_height = window.winfo_screenheight()
-
-window_x = int((screen_width/2) - (window_width/2))
-window_y = int((screen_height/2) - (window_height/2))
-
-#format "(w)x(h)+(x)+(y)"
-window.geometry(f"{window_width}x{window_height}+{window_x}+{window_y}")
-
-window.mainloop()
+    pygame.display.update()
